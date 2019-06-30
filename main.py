@@ -68,7 +68,7 @@ def inline_caps(update, context):
                         id=query.upper(),
                         title=gr["formatted"],
                         input_message_content=InputVenueMessageContent(
-                            title=gr["formatted"],
+                            title=query,
                             address=gr["formatted"],
                             latitude=gr["lat"],
                             longitude=gr["lng"],
