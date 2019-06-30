@@ -1,3 +1,4 @@
+import datetime
 from geo import get_coordinates
 import logging
 import os
@@ -15,8 +16,8 @@ WEBHOOK_SERVER_PORT = os.environ.get("WEBHOOK_SERVER_PORT")
 config = {k: os.environ[k] for k in ENVS}
 config["WEBHOOK_URL"] = WEBHOOK_URL
 config["WEBHOOK_SERVER_PORT"] = WEBHOOK_SERVER_PORT
-current_month = datetime.datetime.now().month
-nof_api_querys = 0
+config["CURRENT_MONTH"] = datetime.datetime.now().month
+config["NOF_API_QUERYS"] = 0
 
 
 logging.basicConfig(
@@ -35,11 +36,11 @@ def inline_caps(update, context):
 
     inline_results = []
 
-    if datetime.datetime.now().month != current_month:
-        current_month = datetime.datetime.now().month
-        nof_api_querys = 0
+    if datetime.datetime.now().month != config["CURRENT_MONTH"]:
+        config["CURRENT_MONTH"] = datetime.datetime.now().month
+        config["NOF_API_QUERYS"] = 0
 
-    if nof_api_querys > 10000:
+    if config["NOF_API_QUERYS"] > 10000:
         inline_results.append(
             InlineQueryResultArticle(
                 id=query.upper(),
@@ -50,7 +51,7 @@ def inline_caps(update, context):
     else:
         geocoding_results = get_coordinates(config["MAPS_API_KEY"], query)
 
-        nof_api_querys += 1
+        config["NOF_API_QUERYS"] += 1
 
         if len(geocoding_results) == 0:
             inline_results.append(
