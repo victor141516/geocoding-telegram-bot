@@ -10,7 +10,7 @@ from telegram import (
 )
 
 
-ENVS = ["TELEGRAM_API_KEY", "MAPS_API_KEY"]
+ENVS = ["TELEGRAM_API_KEY", "PLACES_API_KEY"]
 WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
 WEBHOOK_SERVER_PORT = os.environ.get("WEBHOOK_SERVER_PORT")
 config = {k: os.environ[k] for k in ENVS}
@@ -40,7 +40,7 @@ def inline_caps(update, context):
         config["CURRENT_MONTH"] = datetime.datetime.now().month
         config["NOF_API_QUERYS"] = 0
 
-    if config["NOF_API_QUERYS"] > 10000:
+    if config["NOF_API_QUERYS"] > 2000:
         inline_results.append(
             InlineQueryResultArticle(
                 id=query.upper(),
@@ -49,7 +49,7 @@ def inline_caps(update, context):
             )
         )
     else:
-        geocoding_results = get_coordinates(config["MAPS_API_KEY"], query)
+        geocoding_results = get_coordinates(config["PLACES_API_KEY"], query)
 
         config["NOF_API_QUERYS"] += 1
 
@@ -68,7 +68,7 @@ def inline_caps(update, context):
                         id=query.upper(),
                         title=gr["formatted"],
                         input_message_content=InputVenueMessageContent(
-                            title=query,
+                            title=gr["name"],
                             address=gr["formatted"],
                             latitude=gr["lat"],
                             longitude=gr["lng"],
